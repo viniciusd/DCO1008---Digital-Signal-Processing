@@ -13,3 +13,6 @@ pip-selfcheck.json
 
 # OS X file
 .DS_Store
+
+# projeto 1 ignored files
+projeto1/grey_lena.bmp
