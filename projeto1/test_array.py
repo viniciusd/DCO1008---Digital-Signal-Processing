@@ -1,6 +1,8 @@
 #!bin/python3
 import unittest
 
+import numpy as np
+
 from array import UnboundedArray
 
 class TestUnboundedArray(unittest.TestCase):
@@ -11,8 +13,18 @@ class TestUnboundedArray(unittest.TestCase):
     def test_print_normal_element(self):
         self.assertEqual(self.arr[0, 1], 2)
 
-    def test_print_generating_borders(self):
-        self.arr[-1:1, -1:1]
+    def test_print_normal_element_2(self):
+        self.assertEqual(self.arr[1, 0], 4)
+
+    def test_print_generating_horizontal_borders(self):
+        np.testing.assert_array_equal(self.arr[-1:1, 0], np.array([1, 1, ]).reshape((-1,1)))
+
+    def test_print_generating_horizontal_borders_2(self):
+        np.testing.assert_array_equal(self.arr[-1:2, 0], np.array([2.5, 1, 4]).reshape((-1,1)))
+
+    @unittest.skip('Skipping for now')
+    def test_print_generating_vertical_borders(self):
+        self.arr[1, -1:1]
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

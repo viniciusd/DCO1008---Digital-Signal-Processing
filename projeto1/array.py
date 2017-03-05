@@ -12,7 +12,8 @@ class UnboundedArray(np.ndarray):
             raise NotImplementedError
 
         for axis, x in ((axis, x) for axis, x in enumerate(item) if isinstance(x, slice)):
-            p, q = -x.start if x.start < 0 else 0, x.stop-1 if x.stop > 1 else 0
+            p = -x.start if x.start < 0 else 0
+            q = x.stop-1 if x.stop > 1 else 0
             if axis == 0:
                 if p:
                     arr = np.vstack((np.array([[arr.mean()]*(arr.shape[axis]), ]*p).reshape((1, -1)),
@@ -24,6 +25,7 @@ class UnboundedArray(np.ndarray):
                                     )
             elif axis == 1:
                 if p:
+                    foo = np.array([[arr.mean()]*(arr.shape[axis]), ]*p).reshape((-1,1))
                     arr = np.hstack((np.array([[arr.mean()]*(arr.shape[axis]), ]*p).reshape((-1, 1)),
                                      arr)
                                     )
@@ -35,7 +37,7 @@ class UnboundedArray(np.ndarray):
 
     def __getitem__(self, item):
         bounds = tuple(slice(max(x.start, 0), min(x.stop, size), x.step) if isinstance(x, slice) else x for x, size in zip(item, self.shape))
-        arr = super().__getitem__(bounds)
+        arr = np.array(super().__getitem__(bounds))
         if bounds != item:
             arr = self._generate_bounds(arr, item)
         return arr
