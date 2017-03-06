@@ -15,4 +15,4 @@ pip-selfcheck.json
 .DS_Store
 
 # projeto 1 ignored files
-projeto1/grey_lena.bmp
+projeto1/filtered_lena*.png

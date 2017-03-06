@@ -3,35 +3,36 @@ import numpy as np
 
 
 class UnboundedArray(np.ndarray):
+    COLUMN = (-1, 1)
+    LINE = (1, -1) 
 
     def __new__(cls, input_array):
         return np.asarray(input_array).view(cls)
 
     def _generate_bounds(self, arr, item):
-        print(arr)
+        #print(arr)
 
         for axis, x in ((axis, x) for axis, x in enumerate(item) if isinstance(x, slice)):
             p = -x.start if x.start < 0 else 0
-            q = x.stop-2 if x.stop > 2 else 0
-            # print(p,q)
+            q = x.stop-self.shape[axis] if x.stop > self.shape[axis] else 0
+            #print(p,q)
             if axis == 0:
                 if p:
-                    arr = np.vstack((np.array([[arr.mean()]*(arr.shape[axis]), ]*p).reshape((1, -1)),
+                    arr = np.vstack((np.array([[arr.mean()]*(arr.shape[1]), ]*p).reshape(self.LINE),
                                      arr)
                                     )
                 if q:
                     arr = np.vstack((arr,
-                                     (np.array([[arr.mean()]*(arr.shape[axis]), ]*q).reshape((1, -1))))
+                                     (np.array([[arr.mean()]*(arr.shape[1]), ]*q).reshape(self.LINE)))
                                     )
             elif axis == 1:
                 if p:
-                    foo = np.array([[arr.mean()]*(arr.shape[axis]), ]*p).reshape((-1,1))
-                    arr = np.hstack((np.array([[arr.mean()]*(arr.shape[axis]), ]*p).reshape((-1, 1)),
+                    arr = np.hstack((np.array([[arr.mean()]*(arr.shape[0]), ]*p).reshape(self.COLUMN),
                                      arr)
                                     )
                 if q:
                     arr = np.hstack((arr,
-                                     (np.array([[arr.mean()]*(arr.shape[axis]), ]*q).reshape((-1, 1))))
+                                     (np.array([[arr.mean()]*(arr.shape[0]), ]*q).reshape(self.COLUMN)))
                                     )
         return arr
 
@@ -47,10 +48,8 @@ class UnboundedArray(np.ndarray):
                 arr = arr.reshape((-1,1))
             elif isinstance(bounds[1], slice):
                 arr = arr.reshape((1,-1))
-
         if bounds != item:
             arr = self._generate_bounds(arr, item)
-
         return arr
 
     def __str__(self):
