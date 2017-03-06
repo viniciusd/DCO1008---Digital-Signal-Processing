@@ -9,6 +9,16 @@ class UnboundedArray(np.ndarray):
     def __new__(cls, input_array):
         return np.asarray(input_array).view(cls)
 
+    def __init__(self, input_array, *, padding='zero'):
+        if input_array.ndim > 2:
+            raise NotImplementedError('3+ dimensions not supported')
+        if padding == 'mean':
+            self.padding = 1
+        elif padding == 'zero':
+            self.padding = 0
+        else:
+            raise NotImplementedError(padding+' padding not implemented. Options are: mean, zero')
+
     def _generate_bounds(self, arr, item):
         #print(arr)
 
@@ -18,21 +28,21 @@ class UnboundedArray(np.ndarray):
             #print(p,q)
             if axis == 0:
                 if p:
-                    arr = np.vstack((np.array([[arr.mean()]*(arr.shape[1]), ]*p).reshape(self.LINE),
+                    arr = np.vstack((np.array([[arr.mean()*self.padding]*(arr.shape[1]), ]*p).reshape(self.LINE),
                                      arr)
                                     )
                 if q:
                     arr = np.vstack((arr,
-                                     (np.array([[arr.mean()]*(arr.shape[1]), ]*q).reshape(self.LINE)))
+                                     (np.array([[arr.mean()*self.padding]*(arr.shape[1]), ]*q).reshape(self.LINE)))
                                     )
             elif axis == 1:
                 if p:
-                    arr = np.hstack((np.array([[arr.mean()]*(arr.shape[0]), ]*p).reshape(self.COLUMN),
+                    arr = np.hstack((np.array([[arr.mean()*self.padding]*(arr.shape[0]), ]*p).reshape(self.COLUMN),
                                      arr)
                                     )
                 if q:
                     arr = np.hstack((arr,
-                                     (np.array([[arr.mean()]*(arr.shape[0]), ]*q).reshape(self.COLUMN)))
+                                     (np.array([[arr.mean()*self.padding]*(arr.shape[0]), ]*q).reshape(self.COLUMN)))
                                     )
         return arr
 
