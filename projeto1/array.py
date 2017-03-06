@@ -20,30 +20,18 @@ class UnboundedArray(np.ndarray):
             raise NotImplementedError(padding+' padding not implemented. Options are: mean, zero')
 
     def _generate_bounds(self, arr, item):
-        #print(arr)
-
         for axis, x in ((axis, x) for axis, x in enumerate(item) if isinstance(x, slice)):
             p = -x.start if x.start < 0 else 0
             q = x.stop-self.shape[axis] if x.stop > self.shape[axis] else 0
-            #print(p,q)
-            if axis == 0:
-                if p:
-                    arr = np.vstack((np.array([[arr.mean()*self.padding]*(arr.shape[1]), ]*p).reshape(self.LINE),
-                                     arr)
-                                    )
-                if q:
-                    arr = np.vstack((arr,
-                                     (np.array([[arr.mean()*self.padding]*(arr.shape[1]), ]*q).reshape(self.LINE)))
-                                    )
-            elif axis == 1:
-                if p:
-                    arr = np.hstack((np.array([[arr.mean()*self.padding]*(arr.shape[0]), ]*p).reshape(self.COLUMN),
-                                     arr)
-                                    )
-                if q:
-                    arr = np.hstack((arr,
-                                     (np.array([[arr.mean()*self.padding]*(arr.shape[0]), ]*q).reshape(self.COLUMN)))
-                                    )
+            stack = (np.vstack, np.hstack)[axis]
+            shape = arr.shape[not axis]
+            _1dshape = (self.LINE, self.COLUMN)[axis]
+            arr = stack((np.array([[arr.mean()*self.padding]*(shape), ]*p).reshape(_1dshape),
+                             arr)
+                            ) if p else arr
+            arr = stack((arr,
+                             (np.array([[arr.mean()*self.padding]*(shape), ]*q).reshape(_1dshape)))
+                            ) if q else arr
         return arr
 
     def __getitem__(self, item):
