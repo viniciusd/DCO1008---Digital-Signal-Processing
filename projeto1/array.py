@@ -6,7 +6,7 @@ class UnboundedArray(np.ndarray):
     COLUMN = (-1, 1)
     LINE = (1, -1)
 
-    def __new__(cls, input_array):
+    def __new__(cls, input_array, padding):
         return np.asarray(input_array).view(cls)
 
     def __init__(self, input_array, *, padding='zero'):

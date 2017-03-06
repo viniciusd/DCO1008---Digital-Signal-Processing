@@ -16,21 +16,23 @@ def rgb2gray(rgb):
 
     return gray
 
-#image = UnboundedArray(scipy.ndimage.imread('lena.png').astype(float))
-image = UnboundedArray(misc.imread('lena.png').astype(float))
-image = UnboundedArray(rgb2gray(misc.imread('lena.bmp', mode='RGB')).astype(float))
-
-filtered = np.copy(image)
 kernel1 = 1/9*np.ones((3,3))
-kernel2 =  np.array([[0,1,0], [1, -4, 1], [0, 1, 0]])
+kernel2 = np.array([[0,1,0], [1, -4, 1], [0, 1, 0]])
 
-for kernel in (kernel1, kernel2):
-    for (i, j), x in np.ndenumerate(image):
-         filtered[i, j] = image[i-1:(i+1)+1, j-1:(j+1)+1].dot(kernel).sum()
+for padding in ('zero', 'mean'):
+    #image = UnboundedArray(scipy.ndimage.imread('lena.png').astype(float))
+    web_image = UnboundedArray(misc.imread('lena.png').astype(float), padding=padding)
+    sigaa_image = UnboundedArray(rgb2gray(misc.imread('lena.bmp', mode='RGB')).astype(float), padding=padding)
 
-    misc.imsave('filtered_lena.png', filtered)
+    for image in (web_image, sigaa_image):
+        for kernel in (kernel1, kernel2):
+            filtered = np.copy(image)
+            for (i, j), x in np.ndenumerate(image):
+                 filtered[i, j] = image[i-1:(i+1)+1, j-1:(j+1)+1].dot(kernel).sum()
 
-    sc = scipy.ndimage.filters.convolve(image, kernel)
-    #np.testing.assert_array_equal(filtered, sc)
-    print(((filtered - sc) ** 2).mean())
-    misc.imsave('filtered_lena2.png', sc)
+            misc.imsave('filtered_lena.png', filtered)
+
+            sc = scipy.ndimage.filters.convolve(image, kernel)
+            #np.testing.assert_array_equal(filtered, sc)
+            print(((filtered - sc) ** 2).mean())
+            misc.imsave('filtered_lena2.png', sc)
