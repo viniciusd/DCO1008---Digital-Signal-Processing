@@ -24,15 +24,17 @@ for padding in ('zero', 'mean'):
     web_image = UnboundedArray(misc.imread('lena.png').astype(float), padding=padding)
     sigaa_image = UnboundedArray(rgb2gray(misc.imread('lena.bmp', mode='RGB')).astype(float), padding=padding)
 
-    for image in (web_image, sigaa_image):
-        for kernel in (kernel1, kernel2):
-            filtered = np.copy(image)
+    for im, image in enumerate((web_image, sigaa_image)):
+        for k, kernel in enumerate((kernel1, kernel2)):
+            filtered = UnboundedArray(np.copy(image))
             for (i, j), x in np.ndenumerate(image):
                  filtered[i, j] = image[i-1:(i+1)+1, j-1:(j+1)+1].dot(kernel).sum()
 
-            misc.imsave('filtered_lena.png', filtered)
+            misc.imsave(padding+str(('_web', '_sigaa')[im])+str(k+1)+'filtered_lena.png', filtered.normalize())
 
             sc = scipy.ndimage.filters.convolve(image, kernel)
             #np.testing.assert_array_equal(filtered, sc)
             print(((filtered - sc) ** 2).mean())
-            misc.imsave('filtered_lena2.png', sc)
+            misc.imsave(padding+str(('_web', '_sigaa')[im])+str(k+1)+'filtered_lena2.png', (255/sc.max() * sc).astype(int))
+#             if np.all(kernel == kernel2):
+#                 exit()

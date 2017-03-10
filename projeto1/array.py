@@ -6,7 +6,7 @@ class UnboundedArray(np.ndarray):
     COLUMN = (-1, 1)
     LINE = (1, -1)
 
-    def __new__(cls, input_array, padding):
+    def __new__(cls, input_array, *args, **kwargs):
         return np.asarray(input_array).view(cls)
 
     def __init__(self, input_array, *, padding='zero'):
@@ -52,3 +52,7 @@ class UnboundedArray(np.ndarray):
 
     def __repr__(self):
         return str(np.array(self))
+
+    def normalize(self, to=255, type=int):
+        #return (to/self.max() * self).astype(type)
+        return np.mod(self.astype(type), 256)
