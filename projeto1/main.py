@@ -27,7 +27,7 @@ for padding in ('zero', 'mean'):
 
     for im, image in enumerate((web_image, sigaa_image)):
         for k, kernel in enumerate((kernel1, kernel2)):
-            filtered = UnboundedArray(np.copy(image))
+            filtered = np.zeros(image.shape)
             for (i, j), x in np.ndenumerate(image):
                  filtered[i, j] = image[i-1:(i+1)+1, j-1:(j+1)+1].dot(kernel).sum()
 
@@ -41,4 +41,7 @@ for padding in ('zero', 'mean'):
             sc.save(padding+str(('_web', '_sigaa')[im])+str(k+1)+'filtered_lena2.png')
 
 plt.imshow(filtered, cmap='gray')
+cur_axes = plt.gca()
+cur_axes.axes.get_xaxis().set_visible(False)
+cur_axes.axes.get_yaxis().set_visible(False)
 plt.show()
