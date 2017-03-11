@@ -52,7 +52,3 @@ class UnboundedArray(np.ndarray):
 
     def __repr__(self):
         return str(np.array(self))
-
-    def normalize(self, to=255, type=int):
-        #return (to/self.max() * self).astype(type)
-        return np.mod(self.astype(type), 256)
