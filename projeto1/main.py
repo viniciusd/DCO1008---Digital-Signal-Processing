@@ -20,9 +20,18 @@ def rgb2gray(rgb):
 
     return gray
 
+subplot = iter.count(1)
+
+def subplot_image(image):
+    global subplot
+    plt.subplot(8, 2, next(subplot))
+    plt.imshow(image, cmap='gray')
+    cur_axes = plt.gca()
+    cur_axes.axes.get_xaxis().set_visible(False)
+    cur_axes.axes.get_yaxis().set_visible(False)
+
 kernel1 = 1/9*np.ones((3,3))
 kernel2 = np.array([[0,1,0], [1, -4, 1], [0, 1, 0]])
-subplot = iter.count(1)
 plt.figure(1)
 for padding in ('zero', 'mean'):
     web_image = UnboundedArray(scipy.misc.imread('lena.png').astype(float), padding=padding)
@@ -36,15 +45,11 @@ for padding in ('zero', 'mean'):
 
             filtered = scipy.misc.toimage(filtered, cmin=0)
             filtered.save(padding+str(('_web', '_sigaa')[im])+str(k+1)+'filtered_lena.png')
+            subplot_image(filtered)
 
             sc = scipy.ndimage.filters.convolve(image, kernel)
             sc = scipy.misc.toimage(sc, cmin=0)
-            plt.subplot(8, 1, next(subplot))
-            plt.imshow(filtered, cmap='gray')
-            cur_axes = plt.gca()
-            cur_axes.axes.get_xaxis().set_visible(False)
-            cur_axes.axes.get_yaxis().set_visible(False)
-            
+            subplot_image(sc)
             print(compare_ssim(scipy.misc.fromimage(filtered), scipy.misc.fromimage(sc)))
             sc.save(padding+str(('_web', '_sigaa')[im])+str(k+1)+'filtered_lena2.png')
 
