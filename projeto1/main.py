@@ -20,8 +20,6 @@ def rgb2gray(rgb):
 
     return gray
 
-def plot_image(image):
-    
 kernel1 = 1/9*np.ones((3,3))
 kernel2 = np.array([[0,1,0], [1, -4, 1], [0, 1, 0]])
 subplot = iter.count(1)
