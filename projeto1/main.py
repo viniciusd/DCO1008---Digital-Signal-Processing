@@ -20,48 +20,32 @@ def rgb2gray(rgb):
 
     return gray
 
+def to_image(arr):
+    return scipy.misc.toimage(arr, cmin=0)
 
-def subplot_image(image, title='', row_label=''):
-    global subplot
-    n = next(subplot)
-    axs = plt.subplot(2, 2, n)
-    axs.get_xaxis().set_ticks([]) #set_visible(False)
-    axs.get_yaxis().set_ticks([]) #set_visible(False)
-    if n%2 == 1:
-        axs.set_ylabel(row_label, rotation=0, size='large')
-    axs.set_title(title)
-    plt.imshow(image, cmap='gray')
-
-
-web_lena = scipy.misc.imread('lena.png')
-sigaa_lena = rgb2gray(scipy.misc.imread('lena.bmp', mode='RGB'))
+web_lena = scipy.misc.imread('lena.png').astype(float)
+sigaa_lena = rgb2gray(scipy.misc.imread('lena.bmp', mode='RGB')).astype(float)
 
 kernel1 = 1/9*np.ones((3,3))
 kernel2 = np.array([[0,1,0], [1, -4, 1], [0, 1, 0]])
+
 for k, kernel in enumerate((kernel1, kernel2)):
-    for im, image in enumerate((web_lena, sigaa_lena)):
-        plt.figure()
-        subplot = iter.count(1)
-        for padding in ('zero', 'mean'):
-            image = UnboundedArray(image.astype(float), padding=padding)
+    for padding in ('zero', 'mean'):
+        for im, lena in enumerate((web_lena, sigaa_lena)):
+            image = UnboundedArray(lena, padding=padding)
 
             filtered = np.zeros(image.shape)
             for (i, j), x in np.ndenumerate(image):
                  filtered[i, j] = image[i-1:(i+1)+1, j-1:(j+1)+1].dot(kernel).sum()
 
-            filtered = scipy.misc.toimage(filtered, cmin=0)
-            filtered.save(padding+str(('_web', '_sigaa')[im])+str(k+1)+'filtered_lena.png')
+            lenas_name = padding+('_web', '_sigaa')[im]+('_a', '_b')[k]+'_filtered_lena'
 
-            sc = scipy.ndimage.filters.convolve(image, kernel)
-            sc = scipy.misc.toimage(sc, cmin=0)
-            sc.save(padding+str(('_web', '_sigaa')[im])+str(k+1)+'filtered_lena2.png')
+            filtered = to_image(filtered)
+            filtered.save(lenas_name+'.png')
 
+            sc = to_image(scipy.ndimage.filters.convolve(image, kernel))
+            sc.save(lenas_name+'_scipy.png')
 
-            ssim = 'SSIM\n'+str(round(compare_ssim(scipy.misc.fromimage(filtered), scipy.misc.fromimage(sc)), 3))
-            print(ssim)
-            subplot_image(filtered, padding+str(('_web', '_sigaa')[im])+str(k+1)+'filtered_lena.png', row_label=ssim)
-            subplot_image(sc)
+            ssim = round(compare_ssim(scipy.misc.fromimage(filtered), scipy.misc.fromimage(sc)), 5)
+            print(lenas_name+'\n    SSIM '+str(ssim))
 
-#plt.imshow(filtered, cmap='gray')
-plt.tight_layout()
-plt.show()
