@@ -22,8 +22,8 @@ class UnboundedArray(np.ndarray):
 
     def _generate_bounds(self, arr, item):
         for axis, x in (
-                (axis, x) for axis, x in enumerate(item) if isinstance(x, slice)
-                ):
+               (axis, x) for axis, x in enumerate(item) if isinstance(x, slice)
+               ):
             p = -x.start if x.start < 0 else 0
             q = x.stop-self.shape[axis] if x.stop > self.shape[axis] else 0
             stack = (np.vstack, np.hstack)[axis]
@@ -46,7 +46,8 @@ class UnboundedArray(np.ndarray):
                     slice(
                         max(x.start, 0),
                         min(x.stop, size), x.step
-                        ) if isinstance(x, slice) else x for x, size in zip(item, self.shape)
+                        ) if isinstance(x, slice) else x for x, size
+                    in zip(item, self.shape)
                     )
         arr = super().__getitem__(bounds)
         arr = np.array(arr)
