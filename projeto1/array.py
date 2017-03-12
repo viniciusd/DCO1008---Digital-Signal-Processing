@@ -45,6 +45,3 @@ class UnboundedArray(np.ndarray):
         if bounds != item:
             arr = self._generate_bounds(arr, item)
         return arr
-
-    def __str__(self):
-        return str(np.array(self))
