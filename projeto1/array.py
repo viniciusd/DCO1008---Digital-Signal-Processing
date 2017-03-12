@@ -9,7 +9,7 @@ class UnboundedArray(np.ndarray):
         return np.asarray(input_array).view(cls)
 
     def __init__(self, input_array, *, padding='zero'):
-        if input_array.ndim > 2:
+        if self.ndim > 2:
             raise NotImplementedError('3+ dimensions not supported')
         if padding == 'mean':
             self.padding = 1
