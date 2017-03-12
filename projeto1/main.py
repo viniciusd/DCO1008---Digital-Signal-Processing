@@ -1,6 +1,4 @@
 #!bin/python3
-import itertools as iter
-
 import scipy
 import numpy as np
 from skimage.measure import compare_ssim
@@ -50,5 +48,9 @@ for k, kernel in enumerate((kernel1, kernel2)):
             filtered = to_image(filtered)
             filtered.save(padding+'_'+lenas_name+'.png')
 
-            ssim = round(compare_ssim(scipy.misc.fromimage(filtered), scipy.misc.fromimage(sc)), 5)
+            ssim = round(
+                compare_ssim(
+                    scipy.misc.fromimage(filtered), scipy.misc.fromimage(sc)
+                    ), 5
+                )
             print(lenas_name+'\n    SSIM '+str(ssim))
