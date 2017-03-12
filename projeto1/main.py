@@ -53,4 +53,4 @@ for k, kernel in enumerate((kernel1, kernel2)):
                     scipy.misc.fromimage(filtered), scipy.misc.fromimage(sc)
                     ), 5
                 )
-            print(lenas_name+'\n    SSIM '+str(ssim))
+            print(padding+'_'+lenas_name+'\n    SSIM '+str(ssim))
