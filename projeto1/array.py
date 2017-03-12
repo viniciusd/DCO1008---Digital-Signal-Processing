@@ -48,6 +48,3 @@ class UnboundedArray(np.ndarray):
 
     def __str__(self):
         return str(np.array(self))
-
-    def __repr__(self):
-        return str(np.array(self))
