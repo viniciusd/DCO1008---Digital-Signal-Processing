@@ -30,22 +30,20 @@ kernel1 = 1/9*np.ones((3,3))
 kernel2 = np.array([[0,1,0], [1, -4, 1], [0, 1, 0]])
 
 for k, kernel in enumerate((kernel1, kernel2)):
-    for padding in ('zero', 'mean'):
-        for im, lena in enumerate((web_lena, sigaa_lena)):
+    for im, lena in enumerate((web_lena, sigaa_lena)):
+        lenas_name = ('web', 'sigaa')[im]+('_a', '_b')[k]+'_filtered_lena'
+
+        sc = to_image(scipy.ndimage.filters.convolve(lena, kernel))
+        sc.save('scipy_'+lenas_name+'.png')
+        for padding in ('zero', 'mean'):
             image = UnboundedArray(lena, padding=padding)
 
             filtered = np.zeros(image.shape)
             for (i, j), x in np.ndenumerate(image):
                  filtered[i, j] = image[i-1:(i+1)+1, j-1:(j+1)+1].dot(kernel).sum()
 
-            lenas_name = padding+('_web', '_sigaa')[im]+('_a', '_b')[k]+'_filtered_lena'
-
             filtered = to_image(filtered)
-            filtered.save(lenas_name+'.png')
-
-            sc = to_image(scipy.ndimage.filters.convolve(image, kernel))
-            sc.save(lenas_name+'_scipy.png')
+            filtered.save(padding+'_'+lenas_name+'.png')
 
             ssim = round(compare_ssim(scipy.misc.fromimage(filtered), scipy.misc.fromimage(sc)), 5)
             print(lenas_name+'\n    SSIM '+str(ssim))
-
