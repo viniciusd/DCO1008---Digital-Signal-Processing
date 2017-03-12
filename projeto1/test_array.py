@@ -5,11 +5,12 @@ import numpy as np
 
 from array import UnboundedArray as uarray
 
+
 class TestUnboundedArray(unittest.TestCase):
 
     def setUp(self):
         self.arr = uarray([[1, 2, 3], [4, 5, 6], [7, 8, 9]], padding='mean')
-        self.brr = uarray([[1, 2, 3, 4, 5, 6],[7, 8, 9, 10, 11, 12]], padding='mean')
+        self.brr = uarray([[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12]], padding='mean')
 
     def test_getting_normal_element(self):
         self.assertEqual(self.arr[0, 1], 2)
@@ -33,7 +34,7 @@ class TestUnboundedArray(unittest.TestCase):
         np.testing.assert_array_equal(self.arr[1, -1:2], np.array([4.5, 4, 5]).reshape(uarray.LINE))
 
     def test_getting_upper_right_corner(self):
-        np.testing.assert_array_equal(self.arr[-1:2,1:4], np.array([[4, 4, 4], [2, 3, 4], [5, 6, 4]]))
+        np.testing.assert_array_equal(self.arr[-1:2, 1:4], np.array([[4, 4, 4], [2, 3, 4], [5, 6, 4]]))
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
