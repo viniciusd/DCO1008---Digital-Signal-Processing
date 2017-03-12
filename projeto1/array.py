@@ -16,25 +16,38 @@ class UnboundedArray(np.ndarray):
         elif padding == 'zero':
             self.padding = 0
         else:
-            raise NotImplementedError(padding+' padding not implemented. Options are: mean, zero')
+            raise NotImplementedError(
+                padding+' padding not implemented. Options are: mean, zero'
+                )
 
     def _generate_bounds(self, arr, item):
-        for axis, x in ((axis, x) for axis, x in enumerate(item) if isinstance(x, slice)):
+        for axis, x in (
+                (axis, x) for axis, x in enumerate(item) if isinstance(x, slice)
+                ):
             p = -x.start if x.start < 0 else 0
             q = x.stop-self.shape[axis] if x.stop > self.shape[axis] else 0
             stack = (np.vstack, np.hstack)[axis]
             shape = arr.shape[not axis]
             _1dshape = (self.LINE, self.COLUMN)[axis]
-            arr = stack((np.array([[arr.mean()*self.padding]*(shape), ]*p).reshape(_1dshape),
+            arr = stack((np.array(
+                                  [[arr.mean()*self.padding]*(shape), ]*p
+                                  ).reshape(_1dshape),
                          arr)
                         ) if p else arr
             arr = stack((arr,
-                         (np.array([[arr.mean()*self.padding]*(shape), ]*q).reshape(_1dshape)))
+                         (np.array(
+                            [[arr.mean()*self.padding]*(shape), ]*q
+                             ).reshape(_1dshape)))
                         ) if q else arr
         return arr
 
     def __getitem__(self, item):
-        bounds = tuple(slice(max(x.start, 0), min(x.stop, size), x.step) if isinstance(x, slice) else x for x, size in zip(item, self.shape))
+        bounds = tuple(
+                    slice(
+                        max(x.start, 0),
+                        min(x.stop, size), x.step
+                        ) if isinstance(x, slice) else x for x, size in zip(item, self.shape)
+                    )
         arr = super().__getitem__(bounds)
         arr = np.array(arr)
         if arr.ndim == 1:
