@@ -30,7 +30,7 @@ def convolve2d(image, kernel):
     return filtered
 
 web_lena = scipy.misc.imread('lena.png').astype(float)
-sigaa_lena = rgb2gray(scipy.misc.imread('lena.bmp', mode='RGB')).astype(float)
+sigaa_lena = rgb2gray(scipy.misc.imread('lena_web.png', mode='RGB')).astype(float)
 
 kernel1 = 1/9*np.ones((3, 3))
 kernel2 = np.array([[0, 1, 0], [1, -4, 1], [0, 1, 0]])
