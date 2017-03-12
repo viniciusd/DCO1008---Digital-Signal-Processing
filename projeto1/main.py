@@ -2,7 +2,6 @@
 import scipy
 import numpy as np
 from skimage.measure import compare_ssim
-import matplotlib.pylab as plt
 
 
 from array import UnboundedArray
