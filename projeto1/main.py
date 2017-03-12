@@ -11,7 +11,7 @@ from array import UnboundedArray
 
 
 def rgb2gray(rgb):
-    r, g, b = rgb[:,:,0], rgb[:,:,1], rgb[:,:,2]
+    r, g, b = rgb[:, :, 0], rgb[:, :, 1], rgb[:, :, 2]
     # Scipy implements: r * 299/1000 + g * 587/1000 + b * 114/1000
     # that is the ITU-R 601-2 luma transform
     # Note there is a subtle difference for the r factor, which is
@@ -20,8 +20,10 @@ def rgb2gray(rgb):
 
     return gray
 
+
 def to_image(arr):
     return scipy.misc.toimage(arr, cmin=0)
+
 
 def convolve2d(image, kernel):
     filtered = np.zeros(image.shape)
@@ -32,8 +34,8 @@ def convolve2d(image, kernel):
 web_lena = scipy.misc.imread('lena.png').astype(float)
 sigaa_lena = rgb2gray(scipy.misc.imread('lena.bmp', mode='RGB')).astype(float)
 
-kernel1 = 1/9*np.ones((3,3))
-kernel2 = np.array([[0,1,0], [1, -4, 1], [0, 1, 0]])
+kernel1 = 1/9*np.ones((3, 3))
+kernel2 = np.array([[0, 1, 0], [1, -4, 1], [0, 1, 0]])
 
 for k, kernel in enumerate((kernel1, kernel2)):
     for im, lena in enumerate((web_lena, sigaa_lena)):
