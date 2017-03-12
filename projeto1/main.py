@@ -23,6 +23,12 @@ def rgb2gray(rgb):
 def to_image(arr):
     return scipy.misc.toimage(arr, cmin=0)
 
+def convolve2d(image, kernel):
+    filtered = np.zeros(image.shape)
+    for (i, j), x in np.ndenumerate(image):
+        filtered[i, j] = image[i-1:(i+1)+1, j-1:(j+1)+1].dot(kernel).sum()
+    return filtered
+
 web_lena = scipy.misc.imread('lena.png').astype(float)
 sigaa_lena = rgb2gray(scipy.misc.imread('lena.bmp', mode='RGB')).astype(float)
 
@@ -38,10 +44,7 @@ for k, kernel in enumerate((kernel1, kernel2)):
         for padding in ('zero', 'mean'):
             image = UnboundedArray(lena, padding=padding)
 
-            filtered = np.zeros(image.shape)
-            for (i, j), x in np.ndenumerate(image):
-                 filtered[i, j] = image[i-1:(i+1)+1, j-1:(j+1)+1].dot(kernel).sum()
-
+            filtered = convolve2d(image, kernel)
             filtered = to_image(filtered)
             filtered.save(padding+'_'+lenas_name+'.png')
 
