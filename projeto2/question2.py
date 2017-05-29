@@ -38,8 +38,10 @@ def signal_autocorr_plot(name):
 
 def signal_psd_plot(name):
     rate = 100
-    sig = _load_signal(name)
-    sig = _signal_fix_sample_rate(sig, rate)
+    sig = _signal_fix_sample_rate(
+                                  _load_signal(name),
+                                  rate
+                                  )
     plt.figure()
     plt.psd(sig['hr']**2, Fs=rate)
     plt.savefig('q2_psd_%s.png' % name)
