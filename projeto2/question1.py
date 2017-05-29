@@ -11,7 +11,7 @@ def fft_padded_plot(x):
     plt.plot(X.hz, X.abs)
     plt.xlabel('Frequency (Hz)')
     plt.ylabel('|H|')
-    plt.savefig('fft_padded.png')
+    plt.savefig('q1_fft_padded.png')
 
 
 def fft_not_padded_plot(x):
@@ -20,7 +20,7 @@ def fft_not_padded_plot(x):
     plt.plot(X.hz, X.abs)
     plt.xlabel('Frequency (Hz)')
     plt.ylabel('|H|')
-    plt.savefig('fft_not_padded.png')
+    plt.savefig('q1_fft_not_padded.png')
 
 
 def time_plot(x):
@@ -28,7 +28,7 @@ def time_plot(x):
     plt.plot(x)
     plt.xlabel('Sample')
     plt.ylabel('x')
-    plt.savefig('time.png')
+    plt.savefig('q1_time.png')
 
 
 def fft_time():
