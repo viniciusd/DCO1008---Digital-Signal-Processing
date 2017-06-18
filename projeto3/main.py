@@ -1,48 +1,22 @@
-import aifc
-import sndhdr
+from aiff import Aiff
+import utils
 
-import numpy as np
-from scipy import fftpack 
-from sklearn.metrics import normalized_mutual_info_score
+threshold = 1*10**1
 
-filename = 'song.aif'
-threshold = 2*10**1
+sound = Aiff('song.aif')
 
-assert sndhdr.what(filename).filetype == 'aiff'
+y2 = utils.dct2(sound.sig)
 
-def mutual_info(x, y):
-    return normalized_mutual_info_score(x.flatten(), y.flatten())
+n= 10
+y2[-n:, 0] = 0
+y2[-n:, 1] = 0
+y2[utils.abs(y2) < threshold] = 0
 
-def dct(x):
-    return fftpack.dct(x, norm='ortho')
+import numpy as np; import pdb; pdb.set_trace()
 
-def dct2(x):
-    return np.apply_along_axis(dct, 0, x)
+y2 = utils.idct2(y2, dtype=sound.sig.dtype)
 
-def idct(X, dtype=None):
-    return np.round(fftpack.idct(X, norm='ortho'))
+print(utils.mutual_info(sound.sig, y2))
 
-def idct2(X, dtype='float'):
-    return np.apply_along_axis(idct, 0, X).astype(dtype)
-
-def zeros(arr):
-    return np.zeros(arr.shape, dtype=arr.dtype)
-
-x = aifc.open(filename)
-
-data = x.readframes(x.getnframes())
-sig = np.frombuffer(data, dtype='<i2').reshape(-1, x.getnchannels())
-del data
-
-y2 = dct2(sig)
-y2[np.abs(y2) < threshold] = 0
-y2 = idct2(y2, dtype=sig.dtype)
-
-print(mutual_info(sig, y2))
-
-#import pdb; pdb.set_trace()
-y = aifc.open('song2.aif', 'wb')
-y.setnchannels(x.getnchannels())
-y.setsampwidth(x.getsampwidth())
-y.setframerate(x.getframerate())
-y.writeframes(y2.flatten().tobytes())
+sound.sig = y2
+sound.save('sound2.aif')
