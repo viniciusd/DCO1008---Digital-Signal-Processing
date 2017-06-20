@@ -26,3 +26,6 @@ def from_buffer(data):
 
 def abs(x):
     return np.abs(x)
+
+def map(func, x):
+    return np.array([func(i) for i in x], dtype=x.dtype)
